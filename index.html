@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion Comptable & RH — HCR / BTP</title>
+<style>
+:root{
+  --bg:#f4f6f9; --panel:#ffffff; --ink:#1e2a38; --muted:#64748b; --line:#dde4ee;
+  --blue:#1d6fd4; --blue-d:#14529f; --green:#158a5a; --red:#c0392b; --amber:#b7791f;
+  --lav:#6b4fc9; --shadow:0 1px 3px rgba(20,40,70,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+h1,h2,h3{margin:0 0 10px}
+h2{font-size:19px} h3{font-size:15px}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th{background:#eef2f8;font-weight:600;text-align:center;position:sticky;top:0;z-index:2}
+td.left,th.left{text-align:left}
+tbody tr:nth-child(even){background:#f8fafd}
+tbody tr:hover{background:#eef4fc}
+tfoot td{background:#e9eef7;font-weight:700}
+.tblwrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:6px;background:#fff}
+header#topbar{position:sticky;top:0;z-index:50;background:#14315c;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:var(--shadow)}
+#topbar .brand{font-weight:700;font-size:16px;letter-spacing:.3px}
+#topbar .field{display:flex;align-items:center;gap:5px;font-size:13px}
+#topbar select{font-size:13px;padding:4px 6px;border-radius:4px;border:none}
+#saveInd{font-size:12px;opacity:.85;min-width:88px;text-align:right}
+nav#tabs{position:sticky;top:47px;z-index:40;background:#fff;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;padding:0 8px;gap:2px}
+nav#tabs button{border:none;background:none;padding:9px 14px;font-size:13.5px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;font-weight:600}
+nav#tabs button.on{color:var(--blue-d);border-bottom-color:var(--blue);background:#f0f6ff}
+main{padding:14px;max-width:1500px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h3{margin-bottom:8px;color:var(--blue-d)}
+.flex{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.flex>div{display:flex;flex-direction:column;gap:3px}
+label{font-size:12px;color:var(--muted);font-weight:600}
+input,select{padding:6px 7px;border:1px solid var(--line);border-radius:5px;font-size:13.5px;font-family:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:2px solid #9cc3f0;border-color:var(--blue)}
+input[type=number]{text-align:right}
+button{font-family:inherit;cursor:pointer;border-radius:5px;border:1px solid var(--blue);background:var(--blue);color:#fff;padding:7px 13px;font-size:13.5px;font-weight:600}
+button:hover{background:var(--blue-d)}
+button.ghost{background:#fff;color:var(--blue-d)}
+button.ghost:hover{background:#eaf2fc}
+button.green{background:var(--green);border-color:var(--green)}
+button.red{background:var(--red);border-color:var(--red)}
+button.small{padding:3px 8px;font-size:12px}
+button.link{background:none;border:none;color:var(--blue);text-decoration:underline;padding:2px 4px}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.kpi{flex:1 1 170px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:8px;padding:10px 13px;box-shadow:var(--shadow)}
+.kpi .v{font-size:21px;font-weight:700;white-space:nowrap}
+.kpi .l{font-size:12px;color:var(--muted);font-weight:600}
+.kpi.g{border-left-color:var(--green)} .kpi.r{border-left-color:var(--red)} .kpi.a{border-left-color:var(--amber)} .kpi.v{border-left-color:var(--lav)}
+.pos{color:var(--green);font-weight:700} .neg{color:var(--red);font-weight:700}
+.tag{display:inline-block;background:#e8f0fe;color:var(--blue-d);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700}
+.tag.btp{background:#fdeee2;color:#a05a18} .tag.off{background:#eceff3;color:#789}
+.charts{display:flex;gap:4px;align-items:flex-end;height:150px;padding:8px 4px 0}
+.chart-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px;min-width:0}
+.chart-bar{width:80%;background:linear-gradient(180deg,#4e93ea,#1d6fd4);border-radius:3px 3px 0 0;min-height:2px}
+.chart-lbl{font-size:10px;color:var(--muted);white-space:nowrap}
+.chart-val{font-size:10px;font-weight:700;white-space:nowrap}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.note{font-size:12px;color:var(--muted)}
+.err{color:var(--red);font-size:12px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.info{background:#eaf6ef;border:1px solid #bfe3cd;border-radius:6px;padding:8px 11px;font-size:12.5px;margin-bottom:10px}
+.warn{background:#fdf4e3;border:1px solid #f0d9a6;border-radius:6px;padding:8px 11px;font-size:12.5px;margin-bottom:10px}
+.time-input{width:74px;text-align:center}
+.num-input{width:92px;text-align:right}
+.pill{font-size:11px;font-weight:700;color:#fff;border-radius:9px;padding:1px 7px}
+@media print{header#topbar,nav#tabs,button{display:none!important}.tblwrap{max-height:none;overflow:visible}}
+</style>
+</head>
+<body>
+<header id="topbar">
+  <span class="brand">⚙️ Gestion HCR / BTP</span>
+  <span class="field"><label style="color:#bcd0ea">Société</label><select id="selCompany"></select></span>
+  <span class="field"><label style="color:#bcd0ea">Année</label><select id="selYear"></select></span>
+  <span id="saveInd">✔ Enregistré</span>
+  <span style="flex:1"></span>
+  <button class="small ghost" id="btnExpJson">⬇ Exporter sauvegarde (.json)</button>
+  <button class="small ghost" id="btnImpJson">⬆ Importer sauvegarde (.json)</button>
+  <input type="file" id="fileImp" accept=".json,application/json" class="hidden">
+</header>
+<nav id="tabs">
+  <button data-v="dash" class="on">🏠 Tableau de bord</button>
+  <button data-v="inv">🧾 Factures &amp; Budget</button>
+  <button data-v="sit">🏨 Situation Hôtel</button>
+  <button data-v="rh">👥 RH HCR &amp; Heures supp</button>
+  <button data-v="btp">🏗️ Chantiers BTP</button>
+  <button data-v="cfg">⚙️ Paramètres &amp; Sauvegarde</button>
+</nav>
+<main>
+  <section id="v-dash"></section>
+  <section id="v-inv" class="hidden"></section>
+  <section id="v-sit" class="hidden"></section>
+  <section id="v-rh" class="hidden"></section>
+  <section id="v-btp" class="hidden"></section>
+  <section id="v-cfg" class="hidden"></section>
+</main>
+<script>
+"use strict";
+/* ================= ÉTAT & STOCKAGE ================= */
+const APP_KEY = "gestion_hcr_btp_v1";
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const YEAR0 = new Date().getFullYear();
+function defaultState(){
+  const t = { tiers: [ {from:35, to:39, rate:10}, {from:39, to:43, rate:20}, {from:43, to:null, rate:50} ] };
+  return {
+    version: 1, created: new Date().toISOString(),
+    companies: [], activeCompanyId: null, activeYear: YEAR0,
+    years: Array.from({length:3},(_,i)=>YEAR0-1+i),
+    categories: {}, modes: {}, chantiers: {},
+    invoices: [], situations: {}, employees: [], times: [], payroll: [], empCosts: [], djs: [],
+    settings: t
+  };
+}
+let S = defaultState();
+let view = "dash";
+let ui = { invMonth:"", invCat:"", rhEmp:"", rhTab:"pointage", btpChantier:"", fmtCsv:";" };
+
+function save(){
+  try{
+    localStorage.setItem(APP_KEY, JSON.stringify(S));
+    const el = document.getElementById("saveInd");
+    el.textContent = "💾 " + new Date().toLocaleTimeString("fr-FR");
+    el.style.color = "#9fe3b8";
+    setTimeout(()=>{ el.textContent="✔ Enregistré"; el.style.color=""; }, 1200);
+  }catch(e){ alert("Erreur de sauvegarde locale : " + e.message); }
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(APP_KEY);
+    if(raw){ const d = JSON.parse(raw); if(d && Array.isArray(d.companies)) S = Object.assign(defaultState(), d); }
+  }catch(e){ console.error(e); }
+}
+
+/* ================= UTILITAIRES ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const MONTHS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const y = () => S.activeYear;
+function yearMonths(){ return Array.from({length:12},(_,i)=> S.activeYear + "-" + String(i+1).padStart(2,"0")); }
+function monthLabel(ym){ const p = String(ym).split("-"); return (MONTHS[+p[1]-1]||"?") + " " + p[0]; }
+function monthShort(ym){ const p = String(ym).split("-"); return (MONTHS[+p[1]-1]||"?").slice(0,4) + "."; }
+function eur(n){ return (isFinite(n)?n:0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €"; }
+function num(n,d=2){ return (isFinite(n)?n:0).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function hoursFmt(n){ return num(n,2).replace(/,/g,"h") ; }
+function cnum(id){ const v=$(id).value; return v===""||v==null ? null : Number(String(v).replace(",",".")); }
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function company(){ return S.companies.find(c=>c.id===S.activeCompanyId) || null; }
+function isBTP(){ const c=company(); return !!c && c.type==="btp"; }
+function isHCR(){ const c=company(); return !!c && c.type==="hcr"; }
+
+/* Semaine ISO (clé AAAA-Snn) */
+function isoWeekKey(ds){
+  if(!ds) return null;
+  const d = new Date(ds + "T12:00:00Z");
+  if(isNaN(d)) return null;
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay()+6)%7) + 3);
+  const ft = new Date(Date.UTC(d.getUTCFullYear(),0,4));
+  ft.setUTCDate(ft.getUTCDate() - ((ft.getUTCDay()+6)%7) + 3);
+  const w = 1 + Math.round((d - ft)/(7*86400000));
+  return d.getUTCFullYear() + "-S" + String(w).padStart(2,"0");
+}
+
+/* Découpage d'un total d'heures hebdomadaires selon les tranches paramétrées */
+function weeklySplit(h, tiers){
+  const t = tiers || S.settings.tiers;
+  const first = t[0] ? t[0].from : 35;
+  const out = { normal: Math.min(h, first), tiers: [] };
+  for(let i=0;i<t.length;i++){
+    const tr = t[i];
+    const next = (i+1 < t.length) ? t[i+1].from : null;
+    const a = (tr.to==null) ? (next==null ? h : Math.min(h, next)) : Math.min(h, tr.to);
+    out.tiers.push({ rate: tr.rate, hours: Math.max(0, round2(a - tr.from)) });
+  }
+  return out;
+}
+function hmsToH(min){ const m=Math.max(0,+min||0); return Math.round((m/60+Number.EPSILON)*100)/100; }
+function dayHours(arr, dep, pause){
+  if(!arr || !dep) return null;
+  const p = s => { const m = String(s).split(":"); if(m.length<2) return null; const h=+m[0], mi=+m[1]||0; if(isNaN(h)) return null; return h*60+mi; };
+  const a = p(arr), b = p(dep); if(a==null||b==null) return null;
+  let d = b - a; if(d <= 0) d += 24*60; /* départ après minuit */
+  return round2(hmsToH(d) - (hmsToH(pause||0)));
+}
+
+/* ================= SOCIÉTÉS / ANNÉES ================= */
+function activeCategories(){ return S.categories[S.activeCompanyId] || []; }
+function activeModes(){ return S.modes[S.activeCompanyId] || []; }
+function activeChantiers(){ return S.chantiers[S.activeCompanyId] || []; }
+function members(){ return S.employees.filter(e=>e.companyId===S.activeCompanyId); }
+
+function addCompany(){
+  const name = prompt("Nom de la nouvelle société :");
+  if(!name) return;
+  const type = prompt("Type de société :\n  1 = HCR (hôtellerie / restauration, convention HCR)\n  2 = Promoteur / BTP (suivi par chantier)\n(1 ou 2)", "1");
+  const tp = (type==="2"||/btp/i.test(type||"")) ? "btp" : "hcr";
+  S.companies.push({ id: uid(), name: name.trim(), type: tp, active: true });
+  const c = S.companies[S.companies.length-1];
+  S.categories[c.id] = tp==="btp"
+    ? ["Matériaux","Sous-traitance","Location matériel","Électricité","Fournitures","Transport","Divers"].map(n=>({id:uid(),name:n}))
+    : ["Petit-déjeuner","Aliments & boissons","Électricité","Maintenance","Fournitures","Linge","Marketing","Divers"].map(n=>({id:uid(),name:n}));
+  S.modes[c.id] = ["Espèces","CB","Chèque","Virement","Chèques-Vacances","AMEX"].map(n=>({id:uid(),name:n}));
+  S.chantiers[c.id] = [];
+  S.activeCompanyId = c.id;
+  refreshAll();
+}
+function toggleCompany(id){
+  const c = S.companies.find(x=>x.id===id); if(!c) return;
+  c.active = !c.active;
+  if(!c.active && c.id===S.activeCompanyId) S.activeCompanyId = (S.companies.find(x=>x.active)||{}).id || null;
+  refreshAll();
+}
+function addYear(){
+  const v = prompt("Année à ajouter (ex. 2028) :");
+  const n = parseInt(v,10);
+  if(!n || n<2000 || n>2100) return;
+  if(!S.years.includes(n)) S.years.push(n);
+  S.years.sort((a,b)=>a-b);
+  S.activeYear = n;
+  refreshAll();
+}
+
+/* ================= NAVIGATION ================= */
+function setView(v){
+  view = v;
+  document.querySelectorAll("nav#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
+  ["dash","inv","sit","rh","btp","cfg"].forEach(k=>{ $("v-"+k).classList.toggle("hidden", k!==v); });
+  render();
+}
+function refreshAll(){
+  const sc = $("selCompany"), sy = $("selYear");
+  sc.innerHTML = "";
+  S.companies.filter(c=>c.active).forEach(c=>{
+    const o = document.createElement("option"); o.value=c.id; o.textContent=c.name + (c.type==="btp"?" (BTP)":""); sc.appendChild(o);
+  });
+  if(!S.activeCompanyId || !sc.querySelector(`option[value="${S.activeCompanyId}"]`)){
+    S.activeCompanyId = (S.companies.find(c=>c.active)||{}).id || null;
+  }
+  sc.value = S.activeCompanyId || "";
+  sy.innerHTML = "";
+  S.years.forEach(n=>{ const o=document.createElement("option"); o.value=n; o.textContent=n; sy.appendChild(o); });
+  sy.value = S.activeYear;
+  render();
+}
+function render(){
+  document.querySelectorAll("section").forEach(sec=>sec.innerHTML="");
+  if(!company()){ renderNoCompany(); return; }
+  ({dash:renderDash, inv:renderInv, sit:renderSit, rh:renderRH, btp:renderBTP, cfg:renderCfg})[view]();
+}
+function renderNoCompany(){
+  ["dash","inv","sit","rh","btp"].forEach(k=>$("v-"+k).classList.add("hidden"));
+  $("v-cfg").classList.remove("hidden");
+  document.querySelectorAll("nav#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v==="cfg"));
+  view="cfg";
+  $("v-cfg").innerHTML = `<div class="card"><h2>Bienvenue 🖐️</h2>
+  <p>Commencez par <b>créer une société</b>, puis saisissez vos factures, situations et temps de travail.<br>
+  Tout est enregistré automatiquement dans le navigateur : rien à installer, aucune connexion requise.</p>
+  <div class="flex">${companyFormHTML()}</div>
+  <p class="note" style="margin:8px 0 0">Vous pourrez ajouter d'autres sociétés et d'autres années à tout moment dans ⚙️ Paramètres, et sécuriser vos données avec « Exporter sauvegarde (.json) ».</p></div>`;
+  const btn = $("btnAddCo");
+  if(btn) btn.addEventListener("click", ()=>{
+    const n = $("ncName").value.trim(); if(!n){ alert("Nom de société requis."); return; }
+    const tp = $("ncType").value;
+    $("ncName").value="";
+    createCompany(n, tp);
+    setView("dash");
+  });
+}
+
+/* ================= TABLEAU DE BORD ================= */
+function renderDash(){
+  const c = company(), cs = $("v-dash");
+  const invs = S.invoices.filter(f=>f.companyId===c.id && f.rm && f.rm.startsWith(y()+"-"));
+  const ttc = invs.reduce((s,f)=> s + (f.ttc ?? f.ht ?? 0), 0);
+  const paid = invs.filter(f=>f.payDate).reduce((s,f)=> s + (f.ttc ?? f.ht ?? 0), 0);
+  const cards = [];
+  cards.push(kpi("Total factures " + y() + " (TTC)", eur(ttc), "a"));
+  cards.push(kpi("Factures payées", eur(paid), "g"));
+  cards.push(kpi("Reste à payer", eur(ttc-paid), "r"));
+  let payCost = 0;
+  if(isHCR()){
+    payCost = S.payroll.filter(p=>p.companyId===c.id && p.month && p.month.startsWith(y()+"-")).reduce((s,p)=>s+(+p.cost||0),0);
+    cards.push(kpi("Coût fiches de paie " + y(), eur(payCost), "v"));
+    const modes = activeModes();
+    const encais = yearMonths().reduce((s,m)=>{ const o=S.situations[c.id+"|"+m]||{}; return s + modes.reduce((z,md)=>z+(+o[md.id]||0),0); },0);
+    cards.push(kpi("Encaissements " + y(), eur(encais), "g"));
+  }
+  const catTot = {};
+  invs.forEach(f=>{ const cat=catName(f.catId); catTot[cat]=(catTot[cat]||0)+(f.ttc??f.ht??0); });
+  const top = Object.entries(catTot).sort((a,b)=>b[1]-a[1]).slice(0,5).map(e=>`${esc(e[0])} : <b>${eur(e[1])}</b>`).join("<br>") || '<span class="muted">—</span>';
+  const byMonth = yearMonths().map(m=>{
+    let v = invs.filter(f=>f.rm===m).reduce((s,f)=>s+(f.ttc??f.ht??0),0);
+    if(isHCR()) v += S.payroll.filter(p=>p.companyId===c.id&&p.month===m).reduce((s,p)=>s+(+p.cost||0),0);
+    return {m, v};
+  });
+  const mx = Math.max(1, ...byMonth.map(b=>b.v));
+  const chart = `<div class="charts">${byMonth.map(b=>`
+    <div class="chart-col" title="${monthLabel(b.m)} : ${eur(b.v)}">
+      <span class="chart-val">${b.v>0?num(b.v,0):""}</span>
+      <div class="chart-bar" style="height:${Math.max(2, Math.round(b.v/mx*110))}px"></div>
+      <span class="chart-lbl">${monthShort(b.m)}</span>
+    </div>`).join("")}</div>`;
+  let btpHTML = "";
+  if(isBTP()){
+    const rows = chantierSummaryRows().map(r=>`<tr><td class="left">${esc(r.name)}</td><td>${eur(r.inv)}</td><td>${eur(r.labor)}</td><td><b>${eur(r.inv+r.labor)}</b></td></tr>`).join("");
+    btpHTML = `<div class="card"><h3>🏗️ Coûts par chantier ${y()}</h3>
+      <div class="tblwrap"><table><thead><tr><th class="left">Chantier</th><th>Factures</th><th>Main-d'œuvre</th><th>Total</th></tr></thead><tbody>${rows||`<tr><td colspan="4" class="left muted">Aucun chantier — créez-en dans l'onglet Chantiers BTP.</td></tr>`}</tbody></table></div></div>`;
+  }
+  cs.innerHTML = `
+  <h2>${esc(c.name)} — Année ${y()}</h2>
+  <div class="kpis">${cards.join("")}</div>
+  <div class="grid2">
+    <div class="card"><h3>📊 Coûts par mois de réalisation${isHCR()?" (factures + paie)":""}</h3>${chart}</div>
+    <div class="card"><h3>🏷️ Top catégories ${y()}</h3><div style="padding:6px 2px;line-height:1.9">${top}</div>
+      <p class="note">${invs.length} facture(s) enregistrée(s) sur ${y()}.</p></div>
+  </div>${btpHTML}`;
+}
+function kpi(label, val, cls){ return `<div class="kpi ${cls||""}"><div class="l">${label}</div><div class="v">${val}</div></div>`; }
+function catName(id){ const c=activeCategories().find(x=>x.id===id); return c?c.name:"—"; }
+function chantierName(id){ const c=activeChantiers().find(x=>x.id===id); return c?c.name:"—"; }
+function empName(id){ const e=S.employees.find(x=>x.id===id); return e?e.name:"—"; }
+function invAmount(f){ return f.ttc ?? f.ht ?? 0; }
+
+/* ================= FACTURES & BUDGET ================= */
+function invoiceFormHTML(){
+  const cats = activeCategories(), chs = activeChantiers();
+  return `
+  <div><label>Date de facturation</label><input type="date" id="fDate" value="${todayStr()}"></div>
+  <div><label>Date de paiement <span class="muted">(opt.)</span></label><input type="date" id="fPay"></div>
+  <div><label>Mois de réalisation <span style="color:var(--red)">*</span></label><input type="month" id="fRM" value="${defaultRM()}"></div>
+  <div><label>Fournisseur / libellé</label><input id="fLbl" placeholder="Ex. EDF — août" size="18"></div>
+  <div><label>Montant HT</label><input type="number" id="fHT" class="num-input" step="0.01" min="0" placeholder="0,00"></div>
+  <div><label>Montant TTC <span class="muted">(si HT vide, TTC utilisé)</span></label><input type="number" id="fTTC" class="num-input" step="0.01" min="0" placeholder="0,00"></div>
+  <div><label>Catégorie</label><select id="fCat">${cats.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("")}</select></div>
+  ${isBTP() ? `<div><label>Chantier <span class="muted">(opt.)</span></label><select id="fCh"><option value="">— Aucun —</option>${chs.map(ch=>`<option value="${ch.id}">${esc(ch.name)}</option>`).join("")}</select></div>` : ""}
+  <div style="padding-bottom:1px"><button id="btnAddInv" class="green">+ Ajouter la facture</button></div>`;
+}
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function defaultRM(){ return y()===new Date().getFullYear() ? todayStr().slice(0,7) : y()+"-01"; }
+function renderInv(){
+  const cs = $("v-inv");
+  const cats = activeCategories();
+  const invsY = S.invoices.filter(f=>f.companyId===S.activeCompanyId && f.rm && f.rm.startsWith(y()+"-"));
+  const filtered = invsY.filter(f=>(!ui.invMonth||f.rm===ui.invMonth) && (!ui.invCat||f.catId===ui.invCat));
+  const invList = filtered.slice().sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+  /* Tableau budget: catégories x mois */
+  const rows = cats.map(cat=>{
+    const byM = yearMonths().map(m=> round2(invsY.filter(f=>f.catId===cat.id&&f.rm===m).reduce((s,f)=>s+invAmount(f),0)));
+    const tot = round2(byM.reduce((s,v)=>s+v,0));
+    return { cat, byM, tot, any: tot!==0 || invsY.some(f=>f.catId===cat.id) };
+  });
+  const showRows = rows.filter(r=>r.any);
+  let payRow = null;
+  if(isHCR()){
+    payRow = yearMonths().map(m=> round2(S.payroll.filter(p=>p.companyId===S.activeCompanyId&&p.month===m).reduce((s,p)=>s+(+p.cost||0),0)));
+    payRow.tot = round2(payRow.reduce((s,v)=>s+v,0));
+  }
+  const colTot = yearMonths().map((m,i)=> round2(showRows.reduce((s,r)=>s+r.byM[i],0) + (payRow?payRow[i]:0)));
+  const grand = round2(colTot.reduce((s,v)=>s+v,0));
+  const head = `<tr><th class="left">Catégorie / Mois de réalisation ↦</th>${yearMonths().map(m=>`<th>${monthShort(m)}</th>`).join("")}<th>Total</th></tr>`;
+  const bodyRows = showRows.map(r=>`<tr><td class="left">${esc(r.cat.name)}</td>${r.byM.map(v=>`<td>${v?eur(v):""}</td>`).join("")}<td><b>${eur(r.tot)}</b></td></tr>`).join("");
+  const payHTML = payRow ? `<tr style="background:#f3edfb"><td class="left">💼 Salaires &amp; charges (paie RH)</td>${payRow.map(v=>`<td>${v?eur(v):""}</td>`).join("")}<td><b>${eur(payRow.tot)}</b></td></tr>` : "";
+  const tfootRow = `<tr><td class="left">TOTAL MENSUEL</td>${colTot.map(v=>`<td>${v?eur(v):""}</td>`).join("")}<td>${eur(grand)}</td></tr>`;
+  const cumul = []; let acc=0;
+  colTot.forEach(v=>{ acc=round2(acc+v); cumul.push(acc); });
+  const cumulRow = `<tr><td class="left">Cumul annuel</td>${cumul.map(v=>`<td>${v?eur(v):""}</td>`).join("")}<td>${eur(acc)}</td></tr>`;
+  const listRows = invList.map(f=>`<tr>
+    <td>${f.date?fmtDate(f.date):"—"}</td><td>${f.payDate?fmtDate(f.payDate):"<span class='muted'>non payée</span>"}</td>
+    <td class="left">${esc(f.rm)}</td><td class="left">${esc(f.supplier||f.label||"—")}</td>
+    <td class="left">${esc(catName(f.catId))}</td>
+    ${isBTP()?`<td class="left">${f.chantierId?esc(chantierName(f.chantierId)):"—"}</td>`:""}
+    <td>${f.ht!=null?eur(f.ht):""}</td><td><b>${eur(invAmount(f))}</b></td>
+    <td>${f.payDate?"":`<button class="small ghost" data-pay="${f.id}">✓ Payée</button>`}
+        <button class="small red" data-delin="inv:${f.id}">✕</button></td></tr>`).join("");
+  cs.innerHTML = `
+  <div class="card"><h3>🧾 Saisie rapide de facture</h3>
+    <div class="flex">${invoiceFormHTML()}</div>
+    <p class="note" style="margin:6px 0 0">Le <b>mois de réalisation</b> (AAAA-MM) détermine la colonne du budget : une facture reçue en octobre peut être rattachée à <i>2026-09</i>.</p>
+  </div>
+  <div class="card"><h3>💶 Suivi budgétaire — Catégories × Mois de réalisation ${y()}</h3>
+    <div class="flex" style="margin-bottom:9px">
+      <div><label>Filtrer mois de réalisation</label><select id="fFiltM"><option value="">Tous les mois</option>${yearMonths().map(m=>`<option value="${m}" ${ui.invMonth===m?"selected":""}>${monthLabel(m)}</option>`).join("")}</select></div>
+      <div><label>Filtrer catégorie</label><select id="fFiltC"><option value="">Toutes catégories</option>${cats.map(c=>`<option value="${c.id}" ${ui.invCat===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div>
+      <div><button class="ghost" id="btnCsvBudget" data-csv="budget">⬇ Exporter CSV / Excel</button></div>
+    </div>
+    <div class="tblwrap"><table id="tblBudget"><thead>${head}</thead><tbody>${bodyRows}${payHTML}</tbody><tfoot>${tfootRow}${cumulRow}</tfoot></table></div>
+    ${showRows.length? "" : `<p class="note" style="margin-top:8px">Aucune catégorie avec des montants pour ${y()}.</p>`}
+  </div>
+  <div class="card"><h3>📄 Détail des factures ${y()} ${ui.invMonth? "— "+monthLabel(ui.invMonth):""} ${ui.invCat? "— "+cat(ui.invCat):""}</h3>
+    <div class="tblwrap"><table><thead><tr><th>Facturation</th><th>Paiement</th><th>Mois réalisation</th><th class="left">Fournisseur / libellé</th><th class="left">Catégorie</th>${isBTP()?'<th class="left">Chantier</th>':""}<th>HT</th><th>TTC retenu</th><th></th></tr></thead>
+    <tbody>${listRows || `<tr><td colspan="9" class="left muted">Aucune facture pour ce filtre.</td></tr>`}</tbody></table></div>
+    <div style="margin-top:9px"><button class="ghost" data-csv="invoices">⬇ Exporter la liste CSV / Excel</button></div>
+  </div>`;
+  $("btnAddInv").addEventListener("click", addInvoice);
+  $("fFiltM").addEventListener("change", e=>{ ui.invMonth=e.target.value; render(); });
+  $("fFiltC").addEventListener("change", e=>{ ui.invCat=e.target.value; render(); });
+  cs.querySelectorAll("[data-pay]").forEach(b=>b.addEventListener("click", ()=>{ const f=S.invoices.find(x=>x.id===b.dataset.pay); if(f){ f.payDate=todayStr(); save(); render(); } }));
+  $("fLbl").addEventListener("keydown", e=>{ if(e.key==="Enter") addInvoice(); });
+}
+function cat(id){ const c=activeCategories().find(x=>x.id===id); return c?c.name:""; }
+function fmtDate(ds){ const p=String(ds).split("-"); return p.length===3? `${p[2]}/${p[1]}/${p[0]}` : ds; }
+function addInvoice(){
+  const rm = $("fRM").value;
+  const ht = cnum("fHT"), ttc = cnum("fTTC");
+  if(!rm){ alert("Le mois de réalisation est obligatoire (format AAAA-MM)."); return; }
+  if(ht==null && ttc==null){ alert("Renseignez un montant HT ou TTC."); return; }
+  S.invoices.push({
+    id: uid(), companyId: S.activeCompanyId,
+    date: $("fDate").value || null, payDate: $("fPay").value || null,
+    rm: rm, supplier: $("fLbl").value.trim(),
+    ht: ht, ttc: (ttc!=null? ttc : (ht!=null? ht : null)),
+    catId: $("fCat").value, chantierId: isBTP() ? ($("fCh").value||null) : null
+  });
+  save(); if(view!=="inv") setView("inv"); else render();
+  const rmEl=$("fRM"); $("fLbl").value=""; $("fHT").value=""; $("fTTC").value=""; $("fPay").value=""; if($("fCh")) $("fCh").value="";
+  rmEl.focus();
+}
+
+/* ================= SITUATION HÔTEL (HCR) ================= */
+function sitKey(cid, m){ return cid + "|" + m; }
+function renderSit(){
+  const cs = $("v-sit");
+  if(!isHCR()){
+    cs.innerHTML = `<div class="warn">La feuille de situation mensuelle est réservée aux sociétés <b>convention HCR</b>.<br>La société active n'est pas de type HCR : elle réalise un suivi par chantier dans l'onglet 🏗️ Chantiers BTP.</div>`;
+    return;
+  }
+  const modes = activeModes();
+  const months = yearMonths();
+  const cell = (mid, m) => {
+    const o = S.situations[sitKey(S.activeCompanyId, m)] || {};
+    const v = o[mid];
+    return `<td><input type="number" class="num-input" step="0.01" min="0" data-sit="${mid}|${m}" value="${v!=null? v : ""}" placeholder="—"></td>`;
+  };
+  const rows = modes.map(md=>{
+    const vals = months.map(m=>{ const o=S.situations[sitKey(S.activeCompanyId,m)]||{}; return +o[md.id]||0; });
+    const tot = round2(vals.reduce((s,v)=>s+v,0));
+    return `<tr><td class="left">${esc(md.name)}</td>${months.map(m=>cell(md.id,m)).join("")}<td class="left"><b>${eur(tot)}</b></td></tr>`;
+  }).join("");
+  const colTot = months.map(m=>{ const o=S.situations[sitKey(S.activeCompanyId,m)]||{}; return round2(modes.reduce((s,md)=>s+(+o[md.id]||0),0)); });
+  const grand = round2(colTot.reduce((s,v)=>s+v,0));
+  cs.innerHTML = `
+  <div class="info">Feuille de situation mensuelle : saisissez pour chaque mois <b>les montants encaissés par mode de règlement</b>.
+  La sauvegarde est automatique dès la sortie d'une cellule. Les modes de règlement sont personnalisables dans ⚙️ Paramètres.</div>
+  <div class="card"><h3>🏨 Encaissements par mode de règlement — ${y()}</h3>
+    <div class="tblwrap"><table id="tblSit">
+      <thead><tr><th class="left">Mode de règlement ↦</th>${months.map(m=>`<th>${monthShort(m)}</th>`).join("")}<th>Total ${y()}</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="14" class="left muted">Aucun mode de règlement — ajoutez-en dans ⚙️ Paramètres.</td></tr>`}</tbody>
+      <tfoot><tr><td class="left">TOTAL ENCAISSÉ</td>${colTot.map(v=>`<td>${v?eur(v):""}</td>`).join("")}<td>${eur(grand)}</td></tr></tfoot>
+    </table></div>
+    <div style="margin-top:9px"><button class="ghost" data-csv="sit">⬇ Exporter CSV / Excel</button></div>
+  </div>`;
+  cs.querySelectorAll("[data-sit]").forEach(inp=>{
+    inp.addEventListener("change", ()=>{
+      const [mid, m] = inp.dataset.sit.split("|");
+      const k = sitKey(S.activeCompanyId, m);
+      const o = S.situations[k] || (S.situations[k]={});
+      const v = inp.value==="" ? 0 : (parseFloat(inp.value.replace(",","."))||0);
+      o[mid] = v;
+      save(); render(); 
+    });
+  });
+}
+
+/* ================= RH — CONVENTION HCR ================= */
+function smoothNormal(e){ return round2((+e.refH||35) * 52 / 12); }
+function seasonOf(e){
+  const t = S.times.filter(x=>x.companyId===e.companyId && x.empId===e.id && x.date);
+  if(!t.length) return null;
+  const ds = t.map(x=>x.date).sort();
+  let a = ds[0], b = ds[ds.length-1];
+  if(e.start && e.start >= a) a = e.start;
+  if(e.end && e.end <= b) b = e.end;
+  return { from:a, to:b };
+}
+function timesOf(e, from, to){
+  return S.times.filter(x=>x.companyId===e.companyId && x.empId===e.id && x.date
+    && x.arr && x.dep && (!from || x.date>=from) && (!to || x.date<=to));
+}
+/* Heures dues selon le calcul hebdomadaire */
+function dueHours(e, from, to){
+  const byWeek = {};
+  timesOf(e, from, to).forEach(t=>{
+    const wk = isoWeekKey(t.date);
+    const h = dayHours(t.arr, t.dep, t.pause);
+    if(wk && h!=null) byWeek[wk] = round2((byWeek[wk]||0) + h);
+  });
+  const res = { normal:0, byRate:{}, weeks:[] };
+  S.settings.tiers.forEach(tr=> res.byRate[tr.rate] = 0);
+  Object.keys(byWeek).sort().forEach(wk=>{
+    const sp = weeklySplit(byWeek[wk]);
+    res.normal = round2(res.normal + sp.normal);
+    sp.tiers.forEach(st=>{
+      if(res.byRate[st.rate]!=null) res.byRate[st.rate] = round2(res.byRate[st.rate] + st.hours);
+      else res.byRate[st.rate] = st.hours;
+    });
+    res.weeks.push({ week: wk, h: byWeek[wk], split: sp });
+  });
+  return res;
+}
+/* Heures payées sur les fiches de paie (détail saisi + estimation des tranches manquantes) */
+function paidHours(e, from, to){
+  const rates = S.settings.tiers.map(t=>t.rate);
+  const paid = { normal:0, byRate:{}, hasDetail:true, raw:0 };
+  rates.forEach(r=> paid.byRate[r]=0);
+  const norm = smoothNormal(e);
+  const caps = S.settings.tiers.map((tr,i)=>{
+    const next = S.settings.tiers[i+1];
+    const w = next ? next.from - tr.from : null;
+    return w==null ? Infinity : round2(w*52/12);
+  });
+  const m0 = from ? from.slice(0,7) : "", m1 = to ? to.slice(0,7) : "";
+  S.payroll.filter(p=>p.companyId===e.companyId && p.empId===e.id && p.month && (!m0 || p.month>=m0) && (!m1 || p.month<=m1)).forEach(p=>{
+    const hTot = (p.h==null||p.h==="") ? null : +p.h;
+    const det = [p.h10, p.h20, p.h50].map(v=> (v==null||v==="") ? null : +v);
+    if(hTot!=null) paid.raw = round2(paid.raw + hTot);
+    if(det.some(v=>v!=null)){
+      det.forEach((v,i)=>{ if(v!=null) paid.byRate[rates[i]] = round2((paid.byRate[rates[i]]||0) + v); });
+      let rem = (hTot!=null) ? round2(Math.max(0, hTot - norm - det.reduce((s,v)=> s + (v!=null?v:0), 0))) : 0;
+      caps.forEach((cap,i)=>{
+        if(rem<=0 || det[i]!=null) return;
+        const a = Math.min(rem, cap);
+        paid.byRate[rates[i]] = round2((paid.byRate[rates[i]]||0) + a);
+        rem = round2(rem - a);
+      });
+    }else{
+      paid.hasDetail = false;
+      let rem = Math.max(0, (hTot!=null?hTot:norm) - norm);
+      caps.forEach((cap,i)=>{
+        if(rem<=0) return;
+        const a = Math.min(rem, cap);
+        paid.byRate[rates[i]] = round2((paid.byRate[rates[i]]||0) + a);
+        rem = round2(rem - a);
+      });
+    }
+  });
+  return paid;
+}
+function employeeFormHTML(){
+  return `
+  <div><label>Nom / Prénom</label><input id="eName" placeholder="Ex. Marie Martin" size="20"></div>
+  <div><label>Poste</label><input id="ePoste" placeholder="Ex. Réceptionniste" size="16"></div>
+  <div><label>Durée hebdo (h) <span class="muted">ex. 39</span></label><input type="number" id="eRef" class="num-input" step="0.25" min="1" max="48" placeholder="39"></div>
+  <div><label>Début saison</label><input type="date" id="eStart"></div>
+  <div><label>Fin saison</label><input type="date" id="eEnd"></div>
+  <div><label>Taux horaire brut (€/h) <span class="muted">(opt.)</span></label><input type="number" id="eRate" class="num-input" step="0.01" min="0"></div>
+  <div style="padding-bottom:1px"><button id="btnAddEmp" class="green">+ Ajouter l'employé</button></div>`;
+}
+function renderRH(){
+  const cs = $("v-rh");
+  if(!isHCR()){
+    cs.innerHTML = `<div class="warn">Le module RH (convention HCR, heures supplémentaires 10 % / 20 % / 50 %) est réservé aux sociétés <b>convention HCR</b>.<br>La société active est de type Promoteur / BTP : utilisez l'onglet 🏗️ Chantiers BTP.</div>`;
+    return;
+  }
+  const tabs = [["emp","👤 Employés"],["point","⏱️ Pointage & semaines"],["paie","🧮 Fiches de paie"],["det","📋 Décompte fin de saison"]];
+  const tab = ui.rhTab;
+  cs.innerHTML = `
+  <div style="display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:12px">
+    ${tabs.map(t=>`<button class="ghost" data-rt="${t[0]}" style="border-radius:5px 5px 0 0;border:none;background:${tab===t[0]?"#e8f1fd":"#f2f4f8"};color:${tab===t[0]?"var(--blue-d)":"var(--muted)"};font-weight:700">${t[1]}</button>`).join("")}
+  </div><div id="rhBody"></div>`;
+  cs.querySelectorAll("[data-rt]").forEach(b=>b.addEventListener("click",()=>{ ui.rhTab=b.dataset.rt; renderRH(); }));
+  const body = $("rhBody");
+  if(tab==="emp") renderRHEmp(body);
+  else if(tab==="point") renderRHTime(body);
+  else if(tab==="paie") renderRHPaie(body);
+  else renderRHDet(body);
+}
+function renderRHEmp(el){
+  const emps = members();
+  el.innerHTML = `<div class="card"><h3>Ajouter un employé</h3><div class="flex">${employeeFormHTML()}</div>
+    <p class="note" style="margin:6px 0 0">Pour un contrat lissé de 39 h/hebdo : 151,67 h normales + 17,33 h à +10 % par mois. Renseignez le taux horaire pour obtenir l'estimation en euros du décompte.</p></div>
+  <div class="card"><h3>Saison ${y()} — ${emps.length} employé(s)</h3>
+  <div class="tblwrap"><table><thead><tr><th class="left">Nom / Prénom</th><th class="left">Poste</th><th>Hebdo (h)</th><th>Lissage mensuel</th><th>Début</th><th>Fin</th><th>Taux horaire</th><th></th></tr></thead><tbody>
+  ${emps.map(e=>`<tr>
+    <td class="left"><b>${esc(e.name)}</b></td><td class="left">${esc(e.poste||"—")}</td><td>${num(e.refH)} h</td>
+    <td>${num(smoothNormal(e))} h + ${e.refH>35 ? num(round2((e.refH-35)*52/12)) + " h " : ""}<span class="pill" style="background:#d98d1f">+10&nbsp;%</span></td>
+    <td>${e.start?fmtDate(e.start):"—"}</td><td>${e.end?fmtDate(e.end):"—"}</td>
+    <td>${e.rate?eur(e.rate)+"/h":"—"}</td>
+    <td><button class="small ghost" data-edemp="${e.id}">✎</button> <button class="small red" data-delin="emp:${e.id}">✕</button></td></tr>`).join("")
+    || `<tr><td colspan="8" class="left muted">Aucun employé. Ajoutez votre équipe ci-dessus.</td></tr>`}
+  </tbody></table></div></div>`;
+  const add = ()=>{
+    const name = $("eName").value.trim();
+    const ref = cnum("eRef");
+    if(!name){ alert("Le nom est obligatoire."); return; }
+    if(ref==null || ref<=0){ alert("Renseignez la durée hebdomadaire de référence (ex. 39)."); return; }
+    S.employees.push({ id:uid(), companyId:S.activeCompanyId, name, poste:$("ePoste").value.trim(), refH:ref,
+      start:$("eStart").value||null, end:$("eEnd").value||null, rate:cnum("eRate") });
+    save(); renderRHEmp($("rhBody"));
+    $("rhBody").querySelector("#eName")?.focus();
+  };
+  $("btnAddEmp").addEventListener("click", add);
+  el.querySelectorAll("[data-edemp]").forEach(b=>b.addEventListener("click", ()=>{
+    const e = S.employees.find(x=>x.id===b.dataset.edemp); if(!e) return;
+    const n = prompt("Nouveau nom de l'employé :", e.name); if(n!=null) e.name = n.trim()||e.name;
+    const r = prompt("Durée hebdomadaire (heures) :", e.refH); const rn=parseFloat(String(r).replace(",",".")); if(rn>0) e.refH=rn;
+    const t = prompt("Taux horaire brut (€/h) — vide pour effacer :", e.rate!=null?e.rate:"");
+    e.rate = (t===""||t==null) ? null : parseFloat(String(t).replace(",","."));
+    save(); renderRHEmp($("rhBody"));
+  }));
+}
+
+/* --- Pointage hebdomadaire --- */
+function mondayOf(ds){
+  const d = new Date(ds + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay()+6)%7));
+  return d.toISOString().slice(0,10);
+}
+const DAYS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+function renderRHTime(el){
+  if(ui.rhEmp==="" || !members().some(e=>e.id===ui.rhEmp)) ui.rhEmp = (members()[0]||{}).id || "";
+  const emps = members();
+  const wkRef = ui.pointWeek || todayStr();
+  const monday = mondayOf(wkRef);
+  const weekDates = Array.from({length:7},(_,i)=>{ const d=new Date(monday+"T12:00:00Z"); d.setUTCDate(d.getUTCDate()+i); return d.toISOString().slice(0,10); });
+  const emp = S.employees.find(e=>e.id===ui.rhEmp);
+  const entryFor = (eid, ds) => S.times.find(x=>x.companyId===S.activeCompanyId && x.empId===eid && x.date===ds);
+  const rows = weekDates.map((ds,i)=>{
+    const t = emp ? entryFor(emp.id, ds) : null;
+    let h = "";
+    if(t){ const hh = dayHours(t.arr,t.dep,t.pause); if(hh!=null) h = num(hh)+" h"; }
+    const inYear = ds.startsWith(y()+"-");
+    return `<tr style="${inYear?"":"opacity:.45"}">
+      <td class="left">${DAYS[i]} <span class="muted">${fmtDate(ds)}</span></td>
+      <td><input type="time" class="time-input" data-pt="${emp?emp.id:""}|${ds}|arr" value="${t?t.arr||"":""}"></td>
+      <td><input type="time" class="time-input" data-pt="${emp?emp.id:""}|${ds}|dep" value="${t?t.dep||"":""}"></td>
+      <td><input type="number" class="num-input" data-pt="${emp?emp.id:""}|${ds}|pause" min="0" step="5" placeholder="0" value="${t&&t.pause!=null?t.pause:""}"></td>
+      <td>${h}</td></tr>`;
+  }).join("");
+  let weekTot = 0, anyEntry = false;
+  weekDates.forEach(ds=>{ const t = emp?entryFor(emp.id,ds):null; if(t){ const h=dayHours(t.arr,t.dep,t.pause); if(h!=null){ weekTot+=h; anyEntry=true; } } });
+  weekTot = round2(weekTot);
+  const sp = weeklySplit(weekTot);
+  /* Récap annuel semaines employé sélectionné */
+  let recapRows = "";
+  if(emp){
+    const due = dueHours(emp, y()+"-01-01", y()+"-12-31");
+    recapRows = due.weeks.map(w=>`<tr><td class="left">${w.week}</td><td>${num(w.h)} h</td><td>${num(w.split.normal)} h</td>
+      ${w.split.tiers.map(t=>`<td>${t.hours?`<b>${num(t.hours)} h</b>`:"—"}</td>`).join("")}</tr>`).join("")
+      || `<tr><td colspan="6" class="left muted">Aucun pointage pour ${esc(emp.name)} en ${y()}.</td></tr>`;
+  }
+  el.innerHTML = `
+  <div class="card"><h3>⏱️ Pointage — Arrivée / Départ / Pause</h3>
+    <div class="flex" style="margin-bottom:9px">
+      <div><label>Employé</label><select id="ptEmp">${emps.map(e=>`<option value="${e.id}" ${ui.rhEmp===e.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div>
+      <div><label>Semaine (tout jour de la semaine)</label><input type="date" id="ptWeek" value="${wkRef}"></div>
+      <div><span class="note">Les heures d'un départ après minuit sont comptées automatiquement.</span></div>
+    </div>
+    <div class="tblwrap"><table><thead><tr><th class="left">Jour</th><th>Arrivée</th><th>Départ</th><th>Pause (min)</th><th>Effectué</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${emp && anyEntry ? `<div class="kpis" style="margin-top:10px">
+      <div class="kpi"><div class="l">Total semaine</div><div class="v">${num(weekTot)} h</div></div>
+      <div class="kpi"><div class="l">Heures normales (≤ ${num(S.settings.tiers[0]?.from)} h)</div><div class="v">${num(sp.normal)} h</div></div>
+      ${sp.tiers.map((t,i)=>`<div class="kpi ${i===0?"a":i===1?"r":"v"}"><div class="l">Tranche ${t.rate>=0?"+":""}${t.rate} %</div><div class="v">${num(t.hours)} h</div></div>`).join("")}
+    </div>` : `<p class="note">Saisissez arrivée/départ/pause : les heures se calculent et s'enregistrent automatiquement.</p>`}
+  </div>
+  <div class="card"><h3>📆 Récapitulatif hebdomadaire — ${esc(emp?emp.name:"")} (${y()})</h3>
+    <div class="tblwrap"><table><thead><tr><th class="left">Semaine</th><th>Heures faites</th><th>Normales</th>
+      ${S.settings.tiers.map(t=>`<th>+ ${t.rate} %</th>`).join("")}</tr></thead><tbody>${recapRows}</tbody>
+      <tfoot id="detTotRow"></tfoot></table></div>
+  </div>
+  <div style="margin:9px 0"><button class="ghost" data-csv="weeks">⬇ Exporter les semaines CSV / Excel</button></div>`;
+  $("ptEmp").addEventListener("change", e=>{ ui.rhEmp=e.target.value; renderRHTime($("rhBody")); });
+  $("ptWeek").addEventListener("change", e=>{ ui.pointWeek=e.target.value||todayStr(); renderRHTime($("rhBody")); });
+  el.querySelectorAll("[data-pt]").forEach(inp=>{
+    inp.addEventListener("change", ()=>{
+      const [eid, ds, field] = inp.dataset.pt.split("|");
+      if(!eid) return;
+      let t = entryFor(eid, ds);
+      if(!t){ t = { id:uid(), companyId:S.activeCompanyId, empId:eid, date:ds, arr:null, dep:null, pause:0 }; S.times.push(t); }
+      t[field] = inp.value==="" ? (field==="pause"? 0 : null) : (field==="pause" ? (parseFloat(inp.value)||0) : inp.value);
+      save(); renderRHTime($("rhBody"));
+    });
+  });
+}
+
+/* --- Fiches de paie --- */
+function renderRHPaie(el){
+  if(ui.rhEmp==="" || !members().some(e=>e.id===ui.rhEmp)) ui.rhEmp = (members()[0]||{}).id || "";
+  const emp = S.employees.find(e=>e.id===ui.rhEmp);
+  const months = yearMonths();
+  const norm = emp? smoothNormal(emp) : 0;
+  const line = (m)=>{
+    const p = emp ? S.payroll.find(p2=>p2.companyId===S.activeCompanyId && p2.empId===emp.id && p2.month===m) : null;
+    const hrs = p && p.h!=null ? +p.h : "";
+    const h10 = p && p.h10!=null ? p.h10 : "";
+    const h20 = p && p.h20!=null ? p.h20 : "";
+    const h50 = p && p.h50!=null ? p.h50 : "";
+    const cost = p && p.cost!=null ? p.cost : "";
+    let note = "";
+    if(hrs!=="" ) note = `dont ${num(Math.max(0, hrs - norm),2)} h supp`;
+    else if(cost!=="" || p) note = `base lissée ${num(norm)} h`;
+    return `<tr>
+      <td class="left">${monthLabel(m)}</td>
+      <td><input type="number" class="num-input" data-pj="${m}|h" step="0.01" min="0" value="${hrs}" placeholder="${num(norm)}"></td>
+      <td class="muted">${note}</td>
+      <td><input type="number" class="num-input" data-pj="${m}|h10" step="0.01" min="0" value="${h10}" placeholder="~${num((emp&&emp.refH>35)?round2((emp.refH-35)*52/12):0)}"></td>
+      <td><input type="number" class="num-input" data-pj="${m}|h20" step="0.01" min="0" value="${h20}"></td>
+      <td><input type="number" class="num-input" data-pj="${m}|h50" step="0.01" min="0" value="${h50}"></td>
+      <td><input type="number" class="num-input" data-pj="${m}|cost" step="0.01" min="0" value="${cost}" placeholder="0,00" style="font-weight:700"></td></tr>`;
+  };
+  const totH = emp ? months.reduce((s,m)=>{ const p=S.payroll.find(p2=>p2.companyId===S.activeCompanyId&&p2.empId===emp.id&&p2.month===m); return s + (p&&p.h!=null?+p.h:0); },0) : 0;
+  const totCost = emp ? months.reduce((s,m)=>{ const p=S.payroll.find(p2=>p2.companyId===S.activeCompanyId&&p2.empId===emp.id&&p2.month===m); return s + (p&&p.cost!=null?+p.cost:0); },0) : 0;
+  el.innerHTML = `
+  <div class="info"><b>Intégration budgétaire :</b> le <b>coût global employeur</b> saisi ici alimente automatiquement le budget mensuel (onglet Factures &amp; Budget, ligne « Salaires &amp; charges ») et le tableau de bord de la société HCR.</div>
+  <div class="card"><h3>🧮 Fiches de paie ${y()} — ${esc(emp?emp.name:"")}</h3>
+    <div class="flex" style="margin-bottom:9px">
+      <div><label>Employé</label><select id="pjEmp">${members().map(e=>`<option value="${e.id}" ${ui.rhEmp===e.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div>
+      <div><span class="note">Bulletin lissé ${emp?emp.refH:"—"} h : normales mensuelles ≈ <b>${num(norm)} h</b>.
+      Si vous ne saisissez pas le détail, les heures supp payées sont <u>estimées</u> et réparties tranche par tranche (10 %, 20 %, 50 %).</span></div>
+    </div>
+    <div class="tblwrap"><table><thead><tr><th class="left">Mois (paie)</th><th>Total h payées</th><th>Aide</th><th>Détail +10 %</th><th>Détail +20 %</th><th>Détail +50 %</th><th>Coût global employeur (€)</th></tr></thead>
+    <tbody>${emp ? months.map(line).join("") : `<tr><td colspan="7" class="left muted">Aucun employé.</td></tr>`}</tbody>
+    <tfoot><tr><td class="left">TOTAL ${y()}</td><td>${num(totH)} h</td><td></td><td colspan="3"></td><td>${eur(totCost)}</td></tr></tfoot></table></div>
+  </div>`;
+  $("pjEmp").addEventListener("change", e=>{ ui.rhEmp=e.target.value; renderRHPaie($("rhBody")); });
+  el.querySelectorAll("[data-pj]").forEach(inp=>{
+    inp.addEventListener("change", ()=>{
+      if(!emp) return;
+      const [m, field] = inp.dataset.pj.split("|");
+      let p = S.payroll.find(p2=>p2.companyId===S.activeCompanyId && p2.empId===emp.id && p2.month===m);
+      if(!p){ p = { id:uid(), companyId:S.activeCompanyId, empId:emp.id, month:m, h:null, h10:null, h20:null, h50:null, cost:null }; S.payroll.push(p); }
+      const v = inp.value==="" ? null : (parseFloat(inp.value.replace(",","."))||0);
+      p[field] = v;
+      if(field==="h" && v==null && p.cost==null && p.h10==null && p.h20==null && p.h50==null){
+        S.payroll = S.payroll.filter(x=>x!==p);
+      }
+      save(); renderRHPaie($("rhBody"));
+    });
+  });
+}
+
+/* --- Décompte fin de saison --- */
+function renderRHDet(el){
+  const emps = members();
+  const rates = S.settings.tiers.map(t=>t.rate);
+  const rows = emps.map(e=>{
+    const sea = seasonOf(e);
+    const due = dueHours(e, sea?sea.from:null, sea?sea.to:null);
+    const paid = paidHours(e, sea?sea.from:null, sea?sea.to:null);
+    const cellCls = v => v>0.004 ? "neg" : (v<-0.004 ? "pos" : "muted");
+    const tierCells = rates.map(r=>{
+      const d = due.byRate[r]||0, p = paid.byRate[r]||0, sd = round2(d-p);
+      const val = e.rate ? round2(sd * e.rate * (1 + r/100)) : null;
+      return `<td>${num(d)} h</td><td>${num(p)} h</td>
+      <td class="${cellCls(sd)}">${sd>0?"+":""}${num(sd)} h${val!=null?`<br><span class="${cellCls(sd)}" style="font-weight:400;font-size:12px">${val>0?"≈ ":""}${eur(Math.abs(val))}</span>`:""}</td>`;
+    }).join("");
+    const totDue = round2(due.normal + rates.reduce((s,r)=>s+(due.byRate[r]||0),0));
+    const note = paid.hasDetail ? "" : ` <span class="muted" title="Le détail +10/+20/+50 n'étant pas saisi sur les fiches de paie, les heures payées sont estimées (lissage puis tranches dans l'ordre).">≈ estimé</span>`;
+    return `<tr><td class="left"><b>${esc(e.name)}</b><br><span class="muted" style="font-size:11.5px">${esc(e.poste||"")} · ${num(e.refH)} h/hebdo</span></td>
+      <td class="left" style="font-size:12px">${sea? fmtDate(sea.from)+" → "+fmtDate(sea.to) : "<span class='muted'>aucun pointage</span>"}</td>
+      <td>${num(due.normal)} h</td>${tierCells}<td>${num(totDue)} h</td>
+      <td>${num(paid.raw)} h${note}</td>
+      <td>${e.rate?eur(e.rate)+"/h":"—"}</td></tr>`;
+  }).join("");
+  const multiYear = (sea)=> sea && sea.from.slice(0,4) !== sea.to.slice(0,4);
+  el.innerHTML = `
+  <div class="info"><b>Décompte de fin de saison :</b> les heures <b>dues</b> proviennent du total hebdomadaire (arrivée/départ/pause) ventilé par tranche selon les seuils des paramètres ;
+  les heures <b>payées</b> proviennent des fiches de paie (détail saisi, sinon estimation par lissage). <b>Solde = dû − payé</b> : vert = trop-payé, rouge/bold = restant dû.</div>
+  <div class="card"><h3>📋 Décompte par salarié — par taux ${rates.map(r=>`<span class="pill" style="background:${r===rates[0]?"#1e8a4c":r===rates[1]?"#c0392b":"#6b4fc9"}">+${r} %</span>`).join(" ")}</h3>
+  <div class="tblwrap"><table id="tblDet">
+    <thead><tr><th class="left" rowspan="2">Salarié</th><th class="left" rowspan="2">Saison (pointage)</th><th rowspan="2">Normales dues</th>
+    ${rates.map(r=>`<th colspan="3">Convention +${r} %</th>`).join("")}<th rowspan="2">Total h dues</th><th rowspan="2">Total h payées</th><th rowspan="2">Taux horaire</th></tr>
+    <tr>${rates.map(r=>`<th>Dûes</th><th>Payées</th><th>Solde</th>`).join("")}</tr></thead>
+    <tbody>${rows || `<tr><td colspan="${6+3*rates.length}" class="left muted">Aucun employé — commencez par l'onglet 👤 Employés.</td></tr>`}</tbody>
+  </table></div>
+  ${emps.some(e=>multiYear(seasonOf(e))) ? `<p class="note">⚠️ Certaines saisons s'étendent sur deux années civiles : le décompte couvre toute la saison, indépendamment de l'année affichée.</p>` : ""}
+  <div style="margin-top:9px"><button class="ghost" data-csv="det">⬇ Exporter le décompte CSV / Excel</button></div>
+  </div>`;
+}
+
+/* ================= CHANTIERS BTP ================= */
+function chantierSummaryRows(){
+  const chs = activeChantiers();
+  const months = yearMonths();
+  const emps = members();
+  return chs.map(ch=>{
+    const inv = round2(S.invoices.filter(f=>f.companyId===S.activeCompanyId && f.chantierId===ch.id && f.rm && f.rm.startsWith(y()+"-")).reduce((s,f)=>s+invAmount(f),0));
+    let labor = 0;
+    emps.forEach(e=>{
+      months.forEach(m=>{
+        const ec = S.empCosts.find(x=>x.companyId===S.activeCompanyId && x.empId===e.id && x.month===m);
+        const cost = ec ? (+ec.cost||0) : 0;
+        if(cost<=0) return;
+        const totDJ = round2(S.djs.filter(d2=>d2.companyId===S.activeCompanyId && d2.empId===e.id && d2.month===m).reduce((s,d2)=>s+(+d2.n||0),0));
+        if(totDJ<=0) return;
+        const djCh = S.djs.find(d3=>d3.companyId===S.activeCompanyId && d3.empId===e.id && d3.chantierId===ch.id && d3.month===m);
+        const dj = djCh ? (+djCh.n||0) : 0;
+        labor += cost * (dj / totDJ);
+      });
+    });
+    return { name: ch.name, inv, labor: round2(labor), id: ch.id };
+  });
+}
+function chantierFormHTML(){ return `
+  <div><label>Nom du chantier</label><input id="chName" placeholder="Ex. Résidence Les Pins" size="24"></div>
+  <div style="padding-bottom:1px"><button id="btnAddCh" class="green">+ Ajouter le chantier</button></div>`; }
+function renderBTP(){
+  const cs = $("v-btp");
+  if(!isBTP()){
+    cs.innerHTML = `<div class="warn">Le module Chantiers est réservé aux sociétés <b>Promoteur / BTP</b>.<br>La société active est de type HCR : factures &amp; budget dans 🧾, RH convention HCR dans 👥.</div>`;
+    return;
+  }
+  const chs = activeChantiers();
+  const emps = members();
+  const months = yearMonths();
+  if(ui.btpChantier==="" || !chs.some(c=>c.id===ui.btpChantier)) ui.btpChantier = (chs[0]||{}).id || "";
+  /* coûts employés (par mois) */
+  const costRows = emps.map(e=>{
+    const cells = months.map(m=>{
+      const ec = S.empCosts.find(x=>x.companyId===S.activeCompanyId && x.empId===e.id && x.month===m);
+      return `<td><input type="number" class="num-input" data-ec="${e.id}|${m}" step="0.01" min="0" value="${ec&&ec.cost!=null?ec.cost:""}" placeholder="—"></td>`;
+    }).join("");
+    const tot = round2(months.reduce((s,m)=>{ const ec=S.empCosts.find(x=>x.companyId===S.activeCompanyId&&x.empId===e.id&&x.month===m); return s+(ec?(+ec.cost||0):0); },0));
+    return `<tr><td class="left"><b>${esc(e.name)}</b></td>${cells}<td><b>${eur(tot)}</b></td></tr>`;
+  }).join("");
+  /* demi-journées chantier sélectionné */
+  const ch = chs.find(c=>c.id===ui.btpChantier);
+  const djRows = emps.map(e=>{
+    const cells = months.map(m=>{
+      const d2 = S.djs.find(x=>x.companyId===S.activeCompanyId && x.empId===e.id && x.chantierId===ui.btpChantier && x.month===m);
+      return `<td><input type="number" class="num-input" data-dj="${e.id}|${m}" step="0.5" min="0" value="${d2&&d2.n!=null?d2.n:""}" placeholder="—"></td>`;
+    }).join("");
+    const tot = round2(months.reduce((s,m)=>{ const d2=S.djs.find(x=>x.companyId===S.activeCompanyId&&x.empId===e.id&&x.chantierId===ui.btpChantier&&x.month===m); return s+(d2?(+d2.n||0):0); },0));
+    return `<tr><td class="left"><b>${esc(e.name)}</b></td>${cells}<td><b>${num(tot)}</b></td></tr>`;
+  }).join("");
+  /* synthèse */
+  const sumRows = chantierSummaryRows();
+  const invT = round2(sumRows.reduce((s,r)=>s+r.inv,0));
+  const labT = round2(sumRows.reduce((s,r)=>s+r.labor,0));
+  cs.innerHTML = `
+  <div class="info"><b>Principe :</b> 1) créez vos chantiers, 2) saisissez le <b>coût global par employé et par mois</b>, 3) saisissez les <b>demi-journées par employé et chantier</b>,
+  4) rattachez les factures au chantier (onglet 🧾 Factures). Le coût main-d'œuvre de chaque chantier est <b>proratisé</b> : coût employé × (demi-journées sur le chantier ÷ total demi-journées de l'employé ce mois).</div>
+  <div class="card"><h3>🏗️ Chantiers ${y()}</h3>
+    <div class="flex" style="margin-bottom:9px">${chantierFormHTML()}</div>
+    <div class="tblwrap"><table><thead><tr><th class="left">Chantier</th><th>Factures ${y()}</th><th>Main-d'œuvre ${y()}</th><th>Coût total</th><th></th></tr></thead><tbody>
+    ${sumRows.map(r=>`<tr><td class="left"><b>${esc(r.name)}</b></td><td>${eur(r.inv)}</td><td>${eur(r.labor)}</td><td><b>${eur(round2(r.inv+r.labor))}</b></td>
+      <td><button class="small ghost" data-edch="${r.id}">✎</button> <button class="small red" data-delin="ch:${r.id}">✕</button></td></tr>`).join("")
+      || `<tr><td colspan="5" class="left muted">Aucun chantier — ajoutez le premier ci-dessus.</td></tr>`}
+    </tbody><tfoot><tr><td class="left">TOTAL</td><td>${eur(invT)}</td><td>${eur(labT)}</td><td>${eur(round2(invT+labT))}</td><td></td></tr></tfoot></table></div>
+    <div style="margin-top:9px"><button class="ghost" data-csv="chsyn">⬇ Exporter la synthèse CSV / Excel</button></div>
+  </div>
+  <div class="card"><h3>💶 Coût global par employé (€/mois)</h3>
+    ${emps.length? `<div class="tblwrap"><table><thead><tr><th class="left">Employé</th>${months.map(m=>`<th>${monthShort(m)}</th>`).join("")}<th>Total</th></tr></thead><tbody>${costRows}</tbody></table></div>
+      <p class="note">Sans employé ? Ajoutez l'équipe dans ⚙️ Paramètres (section Employés) — la liste est commune à la société.</p>`
+      : `<p class="note">Ajoutez d'abord vos employés dans ⚙️ Paramètres (section Employés).</p>`}
+  </div>
+  <div class="card"><h3>🕒 Demi-journées par employé — chantier : <select id="djCh">${chs.map(c=>`<option value="${c.id}" ${ui.btpChantier===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></h3>
+    ${emps.length && ch ? `<div class="tblwrap"><table><thead><tr><th class="left">Employé</th>${months.map(m=>`<th>${monthShort(m)}</th>`).join("")}<th>Total</th></tr></thead><tbody>${djRows}</tbody></table></div>
+      <p class="note">Comptez une demi-journée = 0,5 (ex. 2 pour une journée complète). Le prorata excluant ce chantier est géré automatiquement.</p>`
+      : `<p class="note">${emps.length? "Ajoutez d'abord un chantier." : "Ajoutez d'abord les employés dans ⚙️ Paramètres."}</p>`}
+  </div>`;
+  $("btnAddCh").addEventListener("click", ()=>{
+    const n = $("chName").value.trim();
+    if(!n){ alert("Nom du chantier requis."); return; }
+    S.chantiers[S.activeCompanyId] = S.chantiers[S.activeCompanyId]||[];
+    S.chantiers[S.activeCompanyId].push({ id:uid(), name:n });
+    save(); renderBTP();
+  });
+  cs.querySelectorAll("[data-edch]").forEach(b=>b.addEventListener("click", ()=>{
+    const c = activeChantiers().find(x=>x.id===b.dataset.edch); if(!c) return;
+    const n = prompt("Nouveau nom du chantier :", c.name); if(n!=null && n.trim()) { c.name=n.trim(); save(); renderBTP(); }
+  }));
+  const djSel = $("djCh"); if(djSel) djSel.addEventListener("change", e=>{ ui.btpChantier=e.target.value; renderBTP(); });
+  cs.querySelectorAll("[data-ec]").forEach(inp=>inp.addEventListener("change", ()=>{
+    const [eid, m] = inp.dataset.ec.split("|");
+    let ec = S.empCosts.find(x=>x.companyId===S.activeCompanyId && x.empId===eid && x.month===m);
+    const v = inp.value==="" ? null : (parseFloat(inp.value.replace(",","."))||0);
+    if(!ec){ if(v==null) return; ec = {id:uid(), companyId:S.activeCompanyId, empId:eid, month:m, cost:0}; S.empCosts.push(ec); }
+    ec.cost = v;
+    if(v==null) S.empCosts = S.empCosts.filter(x=>x!==ec);
+    save(); renderBTP();
+  }));
+  cs.querySelectorAll("[data-dj]").forEach(inp=>inp.addEventListener("change", ()=>{
+    const [eid, m] = inp.dataset.dj.split("|");
+    let d2 = S.djs.find(x=>x.companyId===S.activeCompanyId && x.empId===eid && x.chantierId===ui.btpChantier && x.month===m);
+    const v = inp.value==="" ? null : (parseFloat(inp.value.replace(",","."))||0);
+    if(!d2){ if(v==null) return; d2 = {id:uid(), companyId:S.activeCompanyId, empId:eid, chantierId:ui.btpChantier, month:m, n:0}; S.djs.push(d2); }
+    d2.n = v;
+    if(v==null) S.djs = S.djs.filter(x=>x!==d2);
+    save(); renderBTP();
+  }));
+}
+
+/* ================= PARAMÈTRES & SAUVEGARDE ================= */
+function companyFormHTML(){
+  return `
+  <div><label>Nom de la société</label><input id="ncName" placeholder="Ex. Hôtel du Parc" size="24"></div>
+  <div><label>Type</label><select id="ncType"><option value="hcr">HCR — hôtellerie / restauration</option><option value="btp">Promoteur / BTP — par chantier</option></select></div>
+  <div style="padding-bottom:1px"><button id="btnAddCo" class="green">+ Créer la société</button></div>`;
+}
+function listEditor(list, kind, hint){
+  return `<div class="flex">
+    <div style="flex:2"><label>${kind}</label>
+      <select multiple size="6" id="lst-${kind}" style="width:100%">${list.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}</select>
+      <span class="note">${hint}</span></div>
+    <div><label>Nouveau</label><input id="new-${kind}" placeholder="Nom"></div>
+    <div><button class="green small" data-addlist="${kind}">+ Ajouter</button></div>
+    <div><button class="ghost small" data-renlist="${kind}">✎ Renommer</button></div>
+    <div><button class="red small" data-dellist="${kind}">✕ Supprimer</button></div>
+  </div>`;
+}
+function wireListEditor(el, kind, getArr, setArr){
+  el.querySelector(`[data-addlist="${kind}"]`).addEventListener("click", ()=>{
+    const inp = el.querySelector(`#new-${kind}`);
+    const n = inp.value.trim(); if(!n) return;
+    getArr().push({ id: uid(), name: n });
+    inp.value=""; save(); renderCfg();
+  });
+  el.querySelector(`[data-renlist="${kind}"]`).addEventListener("click", ()=>{
+    const sel = el.querySelector(`#lst-${kind}`).selectedOptions[0];
+    if(!sel){ alert("Sélectionnez un élément de la liste."); return; }
+    const item = getArr().find(x=>x.id===sel.value); if(!item) return;
+    const n = prompt("Nouveau nom :", item.name);
+    if(n!=null && n.trim()){ item.name=n.trim(); save(); renderCfg(); }
+  });
+  el.querySelector(`[data-dellist="${kind}"]`).addEventListener("click", ()=>{
+    const sel = el.querySelector(`#lst-${kind}`).selectedOptions[0];
+    if(!sel){ alert("Sélectionnez un élément de la liste."); return; }
+    const id = sel.value, name = sel.textContent;
+    const usage = kind==="Catégories"
+      ? S.invoices.filter(f=>f.companyId===S.activeCompanyId && f.catId===id).length
+      : kind==="Modes de règlement"
+      ? Object.keys(S.situations).filter(k=>k.startsWith(S.activeCompanyId+"|")).filter(k=>S.situations[k][id]!=null).length
+      : 0;
+    if(usage>0 && !confirm(`${name} est utilisée ${usage} fois. Le supprimer mettra ces lignes en « — ». Continuer ?`)) return;
+    if(kind==="Modes de règlement" && usage>0){
+      Object.keys(S.situations).forEach(k=>{ if(k.startsWith(S.activeCompanyId+"|") && S.situations[k][id]!=null) delete S.situations[k][id]; });
+    }
+    if(kind==="Catégories"){
+      S.invoices.forEach(f=>{ if(f.companyId===S.activeCompanyId && f.catId===id) f.catId=null; });
+    }
+    setArr(getArr().filter(x=>x.id!==id));
+    save(); renderCfg();
+  });
+}
+function renderCfg(){
+  if(!company()){ render(); return; }
+  const c = company();
+  const tiers = S.settings.tiers;
+  $("v-cfg").innerHTML = `
+  <div class="card"><h3>Sociétés</h3>
+    <div class="flex">${companyFormHTML()}</div>
+    <div class="tblwrap" style="margin-top:9px"><table><thead><tr><th class="left">Société</th><th class="left">Type</th><th>Statut</th><th></th><th></th></tr></thead><tbody>
+    ${S.companies.map(x=>`<tr><td class="left"><b>${esc(x.name)}</b></td>
+      <td class="left">${x.type==="btp"?'<span class="tag btp">Promoteur / BTP</span>':'<span class="tag">Convention HCR</span>'}</td>
+      <td>${x.active?"<span class='pos'>Active</span>":"<span class='tag off'>Désactivée</span>"}</td>
+      <td><button class="small ghost" data-edco="${x.id}">✎ Renommer</button></td>
+      <td><button class="small ${x.active?"red":"green"}" data-tgco="${x.id}">${x.active?"Désactiver":"Réactiver"}</button></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="flex" style="margin-top:9px"><div><label>Ajouter une année</label><input type="number" id="nyYear" placeholder="ex. 2028" class="num-input" min="2000" max="2100"></div>
+      <div style="padding-bottom:1px"><button id="btnAddYear" class="green">+ Ajouter l'année</button></div>
+      <span class="note">Ajouter une année ne supprime jamais l'historique des années précédentes.</span></div>
+  </div>
+  <div class="card"><h3>Employés ${isBTP()?"— équipe BTP (coûts & demi-journées)":"— convention HCR"}</h3>
+    <div class="flex">${employeeFormHTML()}</div>
+    <div class="tblwrap" style="margin-top:9px"><table><thead><tr><th class="left">Nom</th><th class="left">Poste</th><th>Hebdo</th><th>Début</th><th>Fin</th><th>Taux horaire</th><th></th></tr></thead><tbody>
+    ${members().map(e=>`<tr><td class="left">${esc(e.name)}</td><td class="left">${esc(e.poste||"—")}</td><td>${num(e.refH)} h</td>
+      <td>${e.start?fmtDate(e.start):"—"}</td><td>${e.end?fmtDate(e.end):"—"}</td><td>${e.rate?eur(e.rate):"—"}</td>
+      <td><button class="small ghost" data-edemp2="${e.id}">✎</button> <button class="small red" data-delin="emp:${e.id}">✕</button></td></tr>`).join("")
+      || `<tr><td colspan="7" class="left muted">Aucun employé pour cette société.</td></tr>`}
+    </tbody></table></div>
+  </div>
+  <div class="card"><h3>Catégories de factures — ${esc(c.name)}</h3>${listEditor(activeCategories(), "Catégories", "Cliquer + Ctrl pour en sélectionner plusieurs.")}</div>
+  <div class="card"><h3>Modes de règlement — ${esc(c.name)}</h3>${listEditor(activeModes(), "Modes de règlement", "Ex. Espèces, CB, Chèque, Virement, Chèques-Vacances…")}</div>
+  <div class="card"><h3>Heures supplémentaires — tranches hebdomadaires</h3>
+    <div class="info">Calcul <b>à la semaine</b> : au-delà de <b>${num(tiers[0]?.from)} h</b> dans la semaine, chaque heure est classée dans la 1ʳᵉ tranche (ex. +10 %) jusqu'à la borne suivante, puis dans la suivante, etc.
+    Exemple (contrat 39 h lissé) : 35 h puis 43 h ⇒ <b>70 h normales, 4 h à +10 %, 4 h à +20 %</b>.</div>
+    <div class="tblwrap" style="max-width:640px"><table><thead><tr><th class="left">Tranche</th><th>De (h)</th><th>À (h, vide = illimité)</th><th>Majoration (%)</th></tr></thead><tbody>
+    ${tiers.map((t,i)=>`<tr><td class="left">${i+1}</td>
+      <td><input type="number" class="num-input" data-tier="${i}|from" step="0.25" min="0" value="${t.from}"></td>
+      <td><input type="number" class="num-input" data-tier="${i}|to" step="0.25" min="0" value="${t.to==null?"":t.to}" placeholder="illimité"></td>
+      <td><input type="number" class="num-input" data-tier="${i}|rate" step="1" value="${t.rate}"></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="flex" style="margin-top:9px"><div><button class="ghost small" id="btnAddTier">+ Ajouter une tranche</button></div>
+      <div><button class="red small" id="btnDelTier" ${tiers.length<=1?"disabled":""}>✕ Retirer la dernière</button></div>
+      <div><button class="ghost small" id="btnResetTier">↺ Valeurs par défaut (35/39/43 — 10/20/50)</button></div></div>
+  </div>
+  <div class="card"><h3>Sauvegardes</h3>
+    <div class="flex">
+      <div><button id="btnExpJson2">⬇ Exporter sauvegarde (.json)</button></div>
+      <div><button id="btnImpJson2">⬆ Importer sauvegarde (.json)</button></div>
+      <div><button class="red" id="btnResetAll">🗑️ Tout effacer (repartir de zéro)</button></div>
+    </div>
+    <p class="note" style="margin:8px 0 0">💾 <b>Sauvegarde automatique</b> : chaque saisie est enregistrée instantanément dans le navigateur (localStorage), société et année comprises.
+    Exportez régulièrement le fichier .json (ex. une archive par fin de saison / fin d'année) pour conserver l'historique et changer de PC.</p>
+  </div>`;
+  $("btnAddCo").addEventListener("click", ()=>{
+    const n = $("ncName").value.trim(); if(!n){ alert("Nom de société requis."); return; }
+    const tp = $("ncType").value;
+    $("ncName").value="";
+    createCompany(n, tp);
+  });
+  $("v-cfg").querySelectorAll("[data-edco]").forEach(b=>b.addEventListener("click", ()=>{
+    const x = S.companies.find(z=>z.id===b.dataset.edco); if(!x) return;
+    const n = prompt("Nouveau nom de la société :", x.name);
+    if(n!=null && n.trim()){ x.name=n.trim(); save(); refreshAll(); }
+  }));
+  $("v-cfg").querySelectorAll("[data-tgco]").forEach(b=>b.addEventListener("click", ()=>toggleCompany(b.dataset.tgco)));
+  $("btnAddYear").addEventListener("click", ()=>{ const v=$("nyYear").value; const n=parseInt(v,10); if(!n||n<2000||n>2100){alert("Année invalide (2000–2100).");return;} if(!S.years.includes(n)) S.years.push(n); S.years.sort((a,b)=>a-b); S.activeYear=n; save(); refreshAll(); });
+  $("btnAddEmp").addEventListener("click", addEmployeeFromForm);
+  $("v-cfg").querySelectorAll("[data-edemp2]").forEach(b=>b.addEventListener("click", ()=>{
+    const e = S.employees.find(x=>x.id===b.dataset.edemp2); if(!e) return;
+    const n = prompt("Nouveau nom :", e.name); if(n!=null && n.trim()) e.name=n.trim();
+    const r = prompt("Durée hebdo (h) :", e.refH); const rn=parseFloat(String(r).replace(",",".")); if(rn>0) e.refH=rn;
+    const t = prompt("Taux horaire brut (€/h) :", e.rate!=null?e.rate:""); e.rate = (t===""||t==null)?null:parseFloat(String(t).replace(",","."));
+    save(); renderCfg();
+  }));
+  wireListEditor($("v-cfg"), "Catégories", ()=>S.categories[S.activeCompanyId]=S.categories[S.activeCompanyId]||[], a=>S.categories[S.activeCompanyId]=a);
+  wireListEditor($("v-cfg"), "Modes de règlement", ()=>S.modes[S.activeCompanyId]=S.modes[S.activeCompanyId]||[], a=>S.modes[S.activeCompanyId]=a);
+  $("v-cfg").querySelectorAll("[data-tier]").forEach(inp=>inp.addEventListener("change", ()=>{
+    const [i, f] = inp.dataset.tier.split("|");
+    const t = S.settings.tiers[+i]; if(!t) return;
+    const v = inp.value==="" ? null : parseFloat(inp.value);
+    if(f==="to") t.to = v;
+    else if(f==="from") t.from = (v!=null&&v>=0)? v : t.from;
+    else t.rate = (v!=null)? v : t.rate;
+    S.settings.tiers.sort((a,b)=>a.from-b.from);
+    save(); renderCfg();
+  }));
+  $("btnAddTier").addEventListener("click", ()=>{
+    const last = S.settings.tiers[S.settings.tiers.length-1];
+    S.settings.tiers.push({ from: last?(last.to!=null?last.to:last.from+4):35, to:null, rate: 50 });
+    save(); renderCfg();
+  });
+  $("btnDelTier").addEventListener("click", ()=>{ if(S.settings.tiers.length>1){ S.settings.tiers.pop(); save(); renderCfg(); } });
+  $("btnResetTier").addEventListener("click", ()=>{
+    if(!confirm("Restaurer les tranches par défaut ?")) return;
+    S.settings.tiers = [ {from:35,to:39,rate:10}, {from:39,to:43,rate:20}, {from:43,to:null,rate:50} ];
+    save(); renderCfg();
+  });
+  $("btnExpJson2").addEventListener("click", exportJSON);
+  $("btnImpJson2").addEventListener("click", ()=>$("fileImp").click());
+  $("btnResetAll").addEventListener("click", ()=>{
+    if(!confirm("Effacer TOUTES les données (toutes sociétés, toutes années) ? Cette action est irréversible — exportez d'abord une sauvegarde .json.")) return;
+    localStorage.removeItem(APP_KEY);
+    S = defaultState(); refreshAll();
+  });
+}
+function addEmployeeFromForm(){
+  const name = $("eName").value.trim();
+  const ref = cnum("eRef");
+  if(!name){ alert("Le nom de l'employé est obligatoire."); return; }
+  if(ref==null || ref<=0){ alert("Renseignez la durée hebdomadaire de référence (ex. 39)."); return; }
+  S.employees.push({ id:uid(), companyId:S.activeCompanyId, name, poste:$("ePoste").value.trim(), refH:ref,
+    start:$("eStart").value||null, end:$("eEnd").value||null, rate:cnum("eRate") });
+  save(); renderCfg();
+}
+function createCompany(name, tp){
+  S.companies.push({ id:uid(), name, type:tp, active:true });
+  const c = S.companies[S.companies.length-1];
+  S.categories[c.id] = tp==="btp"
+    ? ["Matériaux","Sous-traitance","Location matériel","Électricité","Fournitures","Transport","Divers"].map(n=>({id:uid(),name:n}))
+    : ["Petit-déjeuner","Aliments & boissons","Électricité","Maintenance","Fournitures","Linge","Marketing","Divers"].map(n=>({id:uid(),name:n}));
+  S.modes[c.id] = ["Espèces","CB","Chèque","Virement","Chèques-Vacances","AMEX"].map(n=>({id:uid(),name:n}));
+  S.chantiers[c.id] = [];
+  S.activeCompanyId = c.id;
+  save(); refreshAll();
+}
+
+/* ================= EXPORTS / IMPORTS ================= */
+function download(name, data, mime){
+  const blob = new Blob([data], {type: mime});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+function csvCell(v){ if(v==null) return ""; const s=String(v).replace(/\r?\n/g," ").replace(/"/g,'""'); return /[";\n]/.test(s)? '"'+s+'"' : s; }
+function exportCSV(name, rows){
+  const csv = "\uFEFF" + rows.map(r=>r.map(csvCell).join(ui.fmtCsv)).join("\r\n");
+  download(name, csv, "text/csv;charset=utf-8");
+}
+function stamp(){ const d=new Date(); return d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0"); }
+function exportJSON(){
+  const cname = (company()||{}).name || "sans-societe";
+  const safe = cname.replace(/[^\w\-]+/g,"_").slice(0,40);
+  download(`sauvegarde_${safe}_${S.activeYear}_${stamp()}.json`, JSON.stringify(S, null, 1), "application/json");
+}
+function buildCSV(d){
+  const c = company(); if(!c) return [["—"]];
+  const months = yearMonths();
+  const cy = String(S.activeYear);
+  if(d==="budget"){
+    const invs = S.invoices.filter(f=>f.companyId===c.id && f.rm && f.rm.startsWith(cy+"-"));
+    const rows = [["Société", c.name], ["Année", cy], [], ["Catégorie / Mois de réalisation", ...months.map(m=>m), "Total"]];
+    activeCategories().forEach(cat=>{
+      const vals = months.map(m=> round2(invs.filter(f=>f.catId===cat.id&&f.rm===m).reduce((s,f)=>s+invAmount(f),0)));
+      rows.push([cat.name, ...vals, round2(vals.reduce((s,v)=>s+v,0))]);
+    });
+    if(isHCR()){
+      const pv = months.map(m=> round2(S.payroll.filter(p=>p.companyId===c.id&&p.month===m).reduce((s,p)=>s+(+p.cost||0),0)));
+      rows.push(["Salaires & charges (paie RH)", ...pv, round2(pv.reduce((s,v)=>s+v,0))]);
+    }
+    return rows;
+  }
+  if(d==="invoices"){
+    const rows = [["Date facturation","Date paiement","Mois de réalisation","Fournisseur/libellé","Catégorie", c.type==="btp"?"Chantier":"", "HT","TTC retenu"]]
+      .concat(S.invoices.filter(f=>f.companyId===c.id && f.rm && f.rm.startsWith(cy+"-")).map(f=>[f.date,f.payDate,f.rm,f.supplier,catName(f.catId),c.type==="btp"?(f.chantierId?chantierName(f.chantierId):""):"", f.ht!=null?f.ht:"", invAmount(f)]));
+    return [["Société", c.name],["Année", cy]].concat(rows);
+  }
+  if(d==="sit"){
+    const modes = activeModes();
+    const rows = [["Mode de règlement", ...months.map(m=>m), "Total"]];
+    modes.forEach(md=>{
+      const vals = months.map(m=>{ const o=S.situations[sitKey(c.id,m)]||{}; return +o[md.id]||0; });
+      rows.push([md.name, ...vals, round2(vals.reduce((s,v)=>s+v,0))]);
+    });
+    rows.push(["TOTAL ENCAISSÉ", ...months.map(m=>{ const o=S.situations[sitKey(c.id,m)]||{}; return round2(modes.reduce((s,md)=>s+(+o[md.id]||0),0)); })]);
+    return [["Société", c.name],["Année", cy],[]].concat(rows);
+  }
+  if(d==="weeks"){
+    const e = S.employees.find(x=>x.id===ui.rhEmp) || members()[0];
+    if(!e) return [["Aucun employé"]];
+    const due = dueHours(e, y()+"-01-01", y()+"-12-31");
+    return [["Semaine","Heures faites","Normales", ...S.settings.tiers.map(t=>"+ "+t.rate+" %")]]
+      .concat(due.weeks.map(w=>[w.week, w.h, w.split.normal, ...w.split.tiers.map(t=>t.hours)]));
+  }
+  if(d==="det"){
+    const rows = [["Salarié","Période","Tranche","Heures dues","Heures payées","Solde (h)","Estimation €"]];
+    members().forEach(e=>{
+      const sea = seasonOf(e);
+      const due = dueHours(e, sea?sea.from:null, sea?sea.to:null);
+      const paid = paidHours(e, sea?sea.from:null, sea?sea.to:null);
+      S.settings.tiers.map(t=>t.rate).forEach(r=>{
+        const sd = round2((due.byRate[r]||0) - (paid.byRate[r]||0));
+        rows.push([e.name, sea? sea.from+" → "+sea.to : "—", r+" %", due.byRate[r]||0, paid.byRate[r]||0, sd, e.rate? round2(sd*e.rate*(1+r/100)) : ""]);
+      });
+    });
+    return [["Société", c.name],[],["Décompte fin de saison (hors heures normales lissées)"],[]].concat(rows);
+  }
+  if(d==="chsyn"){
+    const rows = [["Chantier","Factures","Main-d'œuvre","Coût total"]];
+    const all = chantierSummaryRows();
+    all.forEach(r=>rows.push([r.name, r.inv, r.labor, round2(r.inv+r.labor)]));
+    rows.push(["TOTAL", round2(all.reduce((s,r)=>s+r.inv,0)), round2(all.reduce((s,r)=>s+r.labor,0)), round2(all.reduce((s,r)=>s+r.inv+r.labor,0))]);
+    return [["Société", c.name],["Année", cy],[],["Détail: factures rattachées + main-d'œuvre proratisée (coût employé × DJ chantier / DJ totales)"],[]].concat(rows);
+  }
+  return [["—"]];
+}
+
+/* === Import JSON === */
+function importJSON(file){
+  const fr = new FileReader();
+  fr.onload = ()=>{
+    try{
+      const d = JSON.parse(fr.result);
+      if(!d || !Array.isArray(d.companies)) throw new Error("Fichier de sauvegarde non reconnu (clé 'companies' absente).");
+      if(!confirm("Remplacer toutes les données actuelles par cette sauvegarde ? (Une exportation .json est recommandée avant importer.)")) return;
+      localStorage.setItem(APP_KEY, JSON.stringify(d));
+      S = Object.assign(defaultState(), d);
+      view = "dash";
+      refreshAll(); setView("dash");
+      alert("Sauvegarde importée avec succès ✔");
+    }catch(e){ alert("Import impossible : " + e.message); }
+  };
+  fr.readAsText(file, "utf-8");
+}
+
+/* === Délégation globale : suppressions & exports CSV === */
+document.addEventListener("click", (ev)=>{
+  const del = ev.target.closest("[data-delin]");
+  if(del){
+    const [kind, id] = del.dataset.delin.split(":");
+    if(kind==="inv" && confirm("Supprimer cette facture ?")){
+      S.invoices = S.invoices.filter(x=>x.id!==id); save(); render();
+    }else if(kind==="emp" && confirm("Supprimer cet employé ainsi que ses pointages, fiches de paie et coûts associés ?")){
+      S.employees = S.employees.filter(x=>x.id!==id);
+      S.times = S.times.filter(x=>x.empId!==id);
+      S.payroll = S.payroll.filter(x=>x.empId!==id);
+      S.empCosts = S.empCosts.filter(x=>x.empId!==id);
+      S.djs = S.djs.filter(x=>x.empId!==id);
+      if(ui.rhEmp===id) ui.rhEmp="";
+      save(); render();
+    }else if(kind==="ch" && confirm("Supprimer ce chantier ? Les factures rattachées seront conservées sans chantier.")){
+      S.chantiers[S.activeCompanyId] = activeChantiers().filter(x=>x.id!==id);
+      S.invoices.forEach(f=>{ if(f.chantierId===id) f.chantierId=null; });
+      S.djs = S.djs.filter(x=>x.companyId===S.activeCompanyId && x.chantierId!==id);
+      if(ui.btpChantier===id) ui.btpChantier="";
+      save(); render();
+    }
+    return;
+  }
+  const csv = ev.target.closest("[data-csv]");
+  if(csv){
+    const kind = csv.dataset.csv;
+    const names = { budget:"budget_categories_mois", invoices:"factures", sit:"situation_encaissements", weeks:"recap_semaines", det:"decompte_fin_saison", chsyn:"synthese_chantiers" };
+    const c = company();
+    exportCSV(`${names[kind]}_${(c?c.name:"").replace(/[^\w\-]+/g,"_")}_${y()}.csv`, buildCSV(kind));
+  }
+});
+
+/* === Démarrage === */
+load();
+$("selCompany").addEventListener("change", e=>{ S.activeCompanyId = e.target.value || null; save(); refreshAll(); });
+$("selYear").addEventListener("change", e=>{ S.activeYear = parseInt(e.target.value,10); save(); refreshAll(); });
+$("btnExpJson").addEventListener("click", exportJSON);
+$("btnImpJson").addEventListener("click", ()=>$("fileImp").click());
+$("fileImp").addEventListener("change", e=>{ if(e.target.files.length) importJSON(e.target.files[0]); e.target.value=""; });
+document.querySelectorAll("nav#tabs button").forEach(b=>b.addEventListener("click", ()=>setView(b.dataset.v)));
+if(!S.years.includes(YEAR0)){ S.years.push(YEAR0); S.years.sort((a,b)=>a-b); }
+if(!S.years.includes(S.activeYear)) S.activeYear = S.years.includes(YEAR0)? YEAR0 : S.years[S.years.length-1];
+refreshAll();
+setView("dash");
+</script>
+</body>
+</html>
